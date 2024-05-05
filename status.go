@@ -18,7 +18,6 @@ func Status() string {
 		fmt.Fprintf(gpuInfoBuf, "FAN: %s\n", g.FanSpeed)
 		fmt.Fprintf(gpuInfoBuf, "TEM: %s (Current) / %s (Slow) / %s (Max)\n", g.GpuTemp, g.GpuTempSlowThreshold, g.GpuTempMaxGpuThreshold)
 		fmt.Fprintf(gpuInfoBuf, "PWR: %s / %s\n", g.PowerDraw, g.EnforcedPowerLimit)
-		gpuInfoBuf.WriteString("-------------------------------")
 		gpus = append(gpus, gpuInfoBuf.String())
 	}
 	sb.WriteString(strings.Join(gpus, "-------------------------------\n"))
