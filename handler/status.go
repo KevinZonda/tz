@@ -92,3 +92,11 @@ func wrap(s string) string {
 #######
 `, s)
 }
+
+func Cpu() string {
+	return cpuInfo()
+}
+
+func Mem() string {
+	return memInfo()
+}
