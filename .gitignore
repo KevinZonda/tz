@@ -8,3 +8,7 @@ out/
 *.exe~
 
 main
+
+tz
+out
+build

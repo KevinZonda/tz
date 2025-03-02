@@ -1,15 +1,18 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"os"
 	"os/exec"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/KevinZonda/tz/handler"
 )
 
 func main() {
 	g := gin.New()
 	g.GET("/", func(c *gin.Context) {
-		c.String(200, Status())
+		c.String(200, handler.Status())
 	})
 	g.GET("/nv", func(c *gin.Context) {
 		bs, err := exec.Command("nvidia-smi").Output()
