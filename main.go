@@ -38,7 +38,7 @@ func wrap(f func() string) gin.HandlerFunc {
 </head>
 <body>
     <pre>` + f() +
-			"\n\nCurrent refresh interval: " + fmt.Sprint(refreshInterval) + " seconds" +
+			"\n\nRefresh interval: " + fmt.Sprint(refreshInterval) + " seconds" +
 			"\nRefreshed at: " + time.Now().Format(time.RFC3339) +
 			`</pre>
 </body>
