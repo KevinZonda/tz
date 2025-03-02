@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := build
 
 build:
-	go build -o tz main.go
+	go build -v -o tz main.go
 
 run:
 	go run main.go $(PORT)
