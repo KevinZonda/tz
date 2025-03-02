@@ -18,7 +18,18 @@ func cpuInfo() string {
 		log.Println(err)
 		return "Error getting CPU percentages\n"
 	}
-	result.WriteString(fmt.Sprintf("Cores: %d\n", runtime.NumCPU()))
+	result.WriteString(fmt.Sprintf("Total Cores: %d", runtime.NumCPU()))
+	result.WriteString("    ")
+
+	load := 0.0
+	for _, percentage := range percentages {
+		load += percentage
+	}
+
+	result.WriteString(fmt.Sprintf("Load: %.2f%%", load))
+	result.WriteString("    ")
+	result.WriteString(fmt.Sprintf("Avg Load (Per Core): %.2f%%", load/float64(len(percentages))))
+	result.WriteString("\n")
 
 	// If there are many cores, display in a grid
 	if len(percentages) <= 8 {
@@ -45,11 +56,14 @@ func memInfo() string {
 	if err != nil {
 		result.WriteString(fmt.Sprintf("Error getting memory info: %v\n", err))
 	}
-	result.WriteString(fmt.Sprintf("Total: %.2f GB\n", float64(memInfo.Total)/(1024*1024*1024)))
-	result.WriteString(fmt.Sprintf("Used: %.2f GB (%.2f%%)\n",
+	result.WriteString(fmt.Sprintf("Total: %.2f GB", float64(memInfo.Total)/(1024*1024*1024)))
+	result.WriteString("    ")
+	result.WriteString(fmt.Sprintf("Used: %.2f GB (%.2f%%)",
 		float64(memInfo.Used)/(1024*1024*1024),
 		memInfo.UsedPercent))
-	result.WriteString(fmt.Sprintf("Free: %.2f GB\n", float64(memInfo.Free)/(1024*1024*1024)))
+	result.WriteString("    ")
+	result.WriteString(fmt.Sprintf("Free: %.2f GB", float64(memInfo.Free)/(1024*1024*1024)))
+	result.WriteString("\n")
 	return result.String()
 }
 
@@ -58,9 +72,11 @@ func Status() string {
 	result.WriteString(wrap("CPU"))
 	result.WriteString(cpuInfo())
 
+	result.WriteString("\n")
 	result.WriteString(wrap("MEM"))
 	result.WriteString(memInfo())
 
+	result.WriteString("\n")
 	result.WriteString(wrap("GPU"))
 	if shared.IsNvAvailable {
 		result.WriteString(shared.GetSmi())
@@ -71,7 +87,8 @@ func Status() string {
 }
 
 func wrap(s string) string {
-	return fmt.Sprintf(`#########
+	return fmt.Sprintf(`#######
 # %s #
-#########\n`, s)
+#######
+`, s)
 }
