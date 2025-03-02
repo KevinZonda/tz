@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 
@@ -11,7 +12,19 @@ import (
 
 func wrap(f func() string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.String(200, f())
+		refreshInterval := 5 // Default refresh interval in seconds
+		html := `<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="refresh" content="` + fmt.Sprint(refreshInterval) + `">
+    <title>System Monitor</title>
+</head>
+<body>
+    <pre>` + f() + `</pre>
+</body>
+</html>`
+		c.Header("Content-Type", "text/html")
+		c.String(200, html)
 	}
 }
 
