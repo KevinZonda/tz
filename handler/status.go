@@ -19,9 +19,23 @@ func cpuInfo() string {
 		return "Error getting CPU percentages\n"
 	}
 	result.WriteString(fmt.Sprintf("Cores: %d\n", runtime.NumCPU()))
-	for i, percentage := range percentages {
-		result.WriteString(fmt.Sprintf("Core #%d: %.2f%%\n", i, percentage))
+
+	// If there are many cores, display in a grid
+	if len(percentages) <= 8 {
+		for i, percentage := range percentages {
+			result.WriteString(fmt.Sprintf("Core #%d: %.2f%%\n", i, percentage))
+		}
+		return result.String()
 	}
+
+	cols := 4
+	for i, percentage := range percentages {
+		if i > 0 && i%cols == 0 {
+			result.WriteString("\n")
+		}
+		result.WriteString(fmt.Sprintf("Core #%-2d: %6.2f%%    ", i, percentage))
+	}
+	result.WriteString("\n")
 	return result.String()
 }
 
@@ -41,17 +55,23 @@ func memInfo() string {
 
 func Status() string {
 	var result strings.Builder
-	result.WriteString("CPU\n")
+	result.WriteString(wrap("CPU"))
 	result.WriteString(cpuInfo())
 
-	result.WriteString("\nMEM\n")
+	result.WriteString(wrap("MEM"))
 	result.WriteString(memInfo())
 
-	result.WriteString("\nGPU\n")
+	result.WriteString(wrap("GPU"))
 	if shared.IsNvAvailable {
 		result.WriteString(shared.GetSmi())
 	} else {
 		result.WriteString("NV SMI is not available.\n")
 	}
 	return result.String()
+}
+
+func wrap(s string) string {
+	return fmt.Sprintf(`#########
+# %s #
+#########\n`, s)
 }
