@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,15 +14,33 @@ import (
 
 func wrap(f func() string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		refreshInterval := 5 // Default refresh interval in seconds
+		refQuery := c.Query("refresh")
+		if refQuery == "" {
+			refQuery = "1"
+		}
+
+		refreshInterval, err := strconv.Atoi(refQuery)
+		if err != nil {
+			c.String(400, "Invalid refresh interval")
+			return
+		}
+
+		var refreshMeta string
+		if refreshInterval > 0 {
+			refreshMeta = `<meta http-equiv="refresh" content="` + fmt.Sprint(refreshInterval) + `">`
+		}
+
 		html := `<!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="refresh" content="` + fmt.Sprint(refreshInterval) + `">
+    ` + refreshMeta + `
     <title>System Monitor</title>
 </head>
 <body>
-    <pre>` + f() + `</pre>
+    <pre>` + f() +
+			"\n\nCurrent refresh interval: " + fmt.Sprint(refreshInterval) + " seconds" +
+			"\nRefreshed at: " + time.Now().Format(time.RFC3339) +
+			`</pre>
 </body>
 </html>`
 		c.Header("Content-Type", "text/html")
