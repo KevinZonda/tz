@@ -33,7 +33,7 @@ func cpuInfo() string {
 		if i > 0 && i%cols == 0 {
 			result.WriteString("\n")
 		}
-		result.WriteString(fmt.Sprintf("Core #%-2d: %6.2f%%    ", i, percentage))
+		result.WriteString(fmt.Sprintf("Core %-2d: %6.2f%%    ", i, percentage))
 	}
 	result.WriteString("\n")
 	return result.String()
